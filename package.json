@@ -1,0 +1,23 @@
+{
+  "name": "group-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "firebase": "firebase",
+    "configure:auth": "node scripts/configure-auth.mjs",
+    "test": "firebase emulators:exec --only firestore,auth --project demo-group-workspace \"node --test --test-concurrency=1 tests/*.test.mjs\""
+  },
+  "dependencies": {
+    "firebase": "13.1.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase-tools": "15.34.2",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}
