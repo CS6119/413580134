@@ -1,0 +1,54 @@
+rules_version = '2';
+// Assumed data model (all fields required; no extra fields allowed):
+// users/{uid}: uid string (1..128, immutable), displayName string (1..80),
+//   createdAt timestamp (immutable), updatedAt timestamp (server time).
+// users/{uid}/tasks/{taskId}: ownerUid string (1..128, immutable),
+//   title string (1..160), notes string (0..2000),
+//   status 'todo'|'doing'|'done', createdAt timestamp (immutable),
+//   updatedAt timestamp (server time). All documents are private to their owner.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() { return request.auth != null; }
+    function isOwner(uid) { return isAuthenticated() && request.auth.uid == uid; }
+    function validString(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+    function isValidUser(d) {
+      return d.keys().hasAll(['uid','displayName','createdAt','updatedAt'])
+        && d.keys().hasOnly(['uid','displayName','createdAt','updatedAt'])
+        && validString(d.uid, 1, 128) && d.uid == request.auth.uid
+        && validString(d.displayName, 1, 80)
+        && d.createdAt is timestamp && d.updatedAt == request.time;
+    }
+    function isValidTask(d, uid) {
+      return d.keys().hasAll(['ownerUid','title','notes','status','createdAt','updatedAt'])
+        && d.keys().hasOnly(['ownerUid','title','notes','status','createdAt','updatedAt'])
+        && validString(d.ownerUid, 1, 128) && d.ownerUid == uid
+        && validString(d.title, 1, 160) && validString(d.notes, 0, 2000)
+        && d.status in ['todo','doing','done']
+        && d.createdAt is timestamp && d.updatedAt == request.time;
+    }
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidUser(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+      allow update: if isOwner(uid) && isValidUser(request.resource.data)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.createdAt == resource.data.createdAt;
+      // Account deletion requires a separate workflow; no client profile deletion.
+      allow delete: if false;
+      match /tasks/{taskId} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && exists(/databases/$(database)/documents/users/$(uid))
+          && isValidTask(request.resource.data, uid)
+          && request.resource.data.createdAt == request.time;
+        allow update: if isOwner(uid) && exists(/databases/$(database)/documents/users/$(uid))
+          && isValidTask(request.resource.data, uid)
+          && request.resource.data.ownerUid == resource.data.ownerUid
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isOwner(uid);
+      }
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
