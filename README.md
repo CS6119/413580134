@@ -89,6 +89,20 @@ npm test
 - 防止偽造擁有者、任意欄位、過長文字、錯誤型別、刪除必要欄位及竄改時間戳。
 - 防止使用者自行寫入管理員權限，以及繞過父層個人資料。
 
+## 驗收與品質證據
+
+完整的驗收矩陣、功能邏輯、跨領域合約及展示流程請見
+[`docs/acceptance-checklist.md`](docs/acceptance-checklist.md)。Repository 級架構與 AI
+工作約束請見 [`.github/copilot-instructions.md`](.github/copilot-instructions.md)。
+
+驗收時應同步展示：
+
+1. `npm run build`：確認型別檢查與生產建置成功。
+2. `npm test`：確認 Authentication 與 Firestore Emulator 安全／整合測試成功。
+3. `npm run test:e2e`：確認瀏覽器端登入頁流程成功。
+4. GitHub PR：確認變更經過功能分支、差異審查與合併流程。
+5. 本機展示：註冊／登入、帳號連結、個人任務完整操作及未授權存取阻擋。
+
 ## 對照老師教材
 
 | 教材步驟                      | 本專案                                                   |
