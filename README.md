@@ -95,6 +95,10 @@ npm test
 [`docs/acceptance-checklist.md`](docs/acceptance-checklist.md)。Repository 級架構與 AI
 工作約束請見 [`.github/copilot-instructions.md`](.github/copilot-instructions.md)。
 
+完整的本機啟動、User Story、Acceptance Criteria、垂直閉環證據、細節驗收與 PR
+衝突處理流程請見 [`docs/acceptance-demo-guide.md`](docs/acceptance-demo-guide.md)。
+Firebase SDK 與資料合約請見 [`docs/api-contract.md`](docs/api-contract.md)。
+
 驗收時應同步展示：
 
 1. `npm run build`：確認型別檢查與生產建置成功。
