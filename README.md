@@ -98,6 +98,8 @@ npm test
 完整的本機啟動、User Story、Acceptance Criteria、垂直閉環證據、細節驗收與 PR
 衝突處理流程請見 [`docs/acceptance-demo-guide.md`](docs/acceptance-demo-guide.md)。
 Firebase SDK 與資料合約請見 [`docs/api-contract.md`](docs/api-contract.md)。
+專為口頭驗收整理的繁體中文單頁交付包請見
+[`docs/驗收交付包.md`](docs/驗收交付包.md)。
 
 驗收時應同步展示：
 
